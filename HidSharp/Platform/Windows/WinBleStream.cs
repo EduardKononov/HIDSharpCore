@@ -421,9 +421,9 @@ namespace HidSharp.Platform.Windows
 			HandleAcquireIfOpenOrFail();
             try
             {
+                IntPtr* handles = stackalloc IntPtr[2];
                 while (true)
                 {
-                    IntPtr* handles = stackalloc IntPtr[2];
                     handles[0] = _watchEventHandle; handles[1] = _closeEventHandle;
                     uint waitResult = NativeMethods.WaitForMultipleObjects(2, handles, false, NativeMethods.WaitForMultipleObjectsGetTimeout(ReadTimeout));
                     switch (waitResult)

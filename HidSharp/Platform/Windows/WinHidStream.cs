@@ -58,17 +58,17 @@ namespace HidSharp.Platform.Windows
 			_handle = handle;
 			HandleInitAndOpen();
         }
-		
+
         protected override void Dispose(bool disposing)
         {
 			if (!HandleClose()) { return; }
-			
+
 			NativeMethods.SetEvent(_closeEventHandle);
 			HandleRelease();
 
             base.Dispose(disposing);
 		}
-		
+
 		internal override void HandleFree()
 		{
 			NativeMethods.CloseHandle(ref _handle);
@@ -78,7 +78,7 @@ namespace HidSharp.Platform.Windows
         public unsafe override void GetFeature(byte[] buffer, int offset, int count)
         {
             Throw.If.OutOfRange(buffer, offset, count);
-			
+
 			HandleAcquireIfOpenOrFail();
 			try
 			{
@@ -100,7 +100,7 @@ namespace HidSharp.Platform.Windows
         {
             Throw.If.OutOfRange(buffer, offset, count); uint bytesTransferred;
             IntPtr @event = NativeMethods.CreateManualResetEventOrThrow();
-			
+
 			HandleAcquireIfOpenOrFail();
             try
             {
@@ -109,12 +109,12 @@ namespace HidSharp.Platform.Windows
 	                int minIn = Device.GetMaxInputReportLength();
                     if (minIn <= 0) { throw new IOException("Can't read from this device."); }
                     if (_readBuffer == null || _readBuffer.Length < Math.Max(count, minIn)) { Array.Resize(ref _readBuffer, Math.Max(count, minIn)); }
-	
+
 	                fixed (byte* ptr = _readBuffer)
 	                {
                         var overlapped = stackalloc NativeOverlapped[1];
                         overlapped[0].EventHandle = @event;
-                        
+
                         NativeMethods.OverlappedOperation(_handle, @event, ReadTimeout, _closeEventHandle,
                             NativeMethods.ReadFile(_handle, ptr, Math.Max(count, minIn), IntPtr.Zero, overlapped),
                             overlapped, out bytesTransferred);
@@ -135,7 +135,7 @@ namespace HidSharp.Platform.Windows
         public unsafe override void SetFeature(byte[] buffer, int offset, int count)
         {
             Throw.If.OutOfRange(buffer, offset, count);
-			
+
 			HandleAcquireIfOpenOrFail();
 			try
 			{
@@ -171,18 +171,18 @@ namespace HidSharp.Platform.Windows
                         Array.Clear(_writeBuffer, count, minOut - count);
                         count = minOut;
                     }
-	
+
 	                fixed (byte* ptr = _writeBuffer)
 	                {
 	                    int offset0 = 0;
 	                    while (count > 0)
 	                    {
-                            var overlapped = stackalloc NativeOverlapped[1];
-                            overlapped[0].EventHandle = @event;
+                            NativeOverlapped overlapped = default;
+                            overlapped.EventHandle = @event;
 
                             NativeMethods.OverlappedOperation(_handle, @event, WriteTimeout, _closeEventHandle,
-	                            NativeMethods.WriteFile(_handle, ptr + offset0, Math.Min(minOut, count), IntPtr.Zero, overlapped),
-	                            overlapped, out bytesTransferred);
+	                            NativeMethods.WriteFile(_handle, ptr + offset0, Math.Min(minOut, count), IntPtr.Zero, &overlapped),
+	                            &overlapped, out bytesTransferred);
 	                        count -= (int)bytesTransferred; offset0 += (int)bytesTransferred;
 	                    }
 	                }
