@@ -339,7 +339,7 @@ namespace HidSharp.Platform.Windows
         public struct SP_DEVICE_INTERFACE_DETAIL_DATA
         {
             public int Size;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst=1024)] public string DevicePath;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)] public string DevicePath;
         }
 
         public enum HIDP_REPORT_TYPE
@@ -611,7 +611,7 @@ namespace HidSharp.Platform.Windows
 
             [FieldOffset(29)]
             public byte IsReadable;
-            
+
             [FieldOffset(30)]
             public byte IsWritable;
 
@@ -847,30 +847,30 @@ namespace HidSharp.Platform.Windows
         [Flags]
         public enum BDIF : uint
         {
-            Address          = 0x0000001,
-            Cod              = 0x0000002,
-            Name             = 0x0000004,
-            Paired           = 0x0000008,
-            Personal         = 0x0000010,
-            Connected        = 0x0000020,
-            ShortName        = 0x0000040,
-            Visible          = 0x0000080,
-            SspSupported     = 0x0000100,
-            SspPaired        = 0x0000200,
+            Address = 0x0000001,
+            Cod = 0x0000002,
+            Name = 0x0000004,
+            Paired = 0x0000008,
+            Personal = 0x0000010,
+            Connected = 0x0000020,
+            ShortName = 0x0000040,
+            Visible = 0x0000080,
+            SspSupported = 0x0000100,
+            SspPaired = 0x0000200,
             SspMitmProtected = 0x0000400,
-            Rssi             = 0x0001000,
-            Eir              = 0x0002000,
-            Br               = 0x0004000, // Windows 8
-            Le               = 0x0008000, // Windows 8
-            LePaired         = 0x0010000, // Windows 8
-            LePersonal       = 0x0020000, // Windows 8
-            LeMitmProtected  = 0x0040000, // Windows 8
+            Rssi = 0x0001000,
+            Eir = 0x0002000,
+            Br = 0x0004000, // Windows 8
+            Le = 0x0008000, // Windows 8
+            LePaired = 0x0010000, // Windows 8
+            LePersonal = 0x0020000, // Windows 8
+            LeMitmProtected = 0x0040000, // Windows 8
             LePrivacyEnabled = 0x0080000, // Windows 8
-            LeRandomAddress  = 0x0100000, // Windows 8
-            LeDiscoverable   = 0x0200000, // Windows 10
-            LeName           = 0x0400000, // Windows 10
-            Unknown1         = 0x1000000, // ???
-            Unknown2         = 0x2000000  // ???
+            LeRandomAddress = 0x0100000, // Windows 8
+            LeDiscoverable = 0x0200000, // Windows 10
+            LeName = 0x0400000, // Windows 10
+            Unknown1 = 0x1000000, // ???
+            Unknown2 = 0x2000000  // ???
         }
 
         // Reference:
@@ -953,7 +953,7 @@ namespace HidSharp.Platform.Windows
         public static int CM_Get_Device_ID(uint devInst, out string deviceID)
         {
             int ret; deviceID = null;
-            
+
             int length;
             ret = CM_Get_Device_ID_Size(out length, devInst);
             if (ret != 0) { return ret; }
@@ -1039,7 +1039,7 @@ namespace HidSharp.Platform.Windows
         [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool GetVersionEx(ref OSVERSIONINFO version);
-         
+
         [DllImport("hid.dll")]
         public static extern void HidD_GetHidGuid(out Guid hidGuid);
 
@@ -1366,12 +1366,12 @@ namespace HidSharp.Platform.Windows
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool CloseHandle(IntPtr handle);
 
-		public static bool CloseHandle(ref IntPtr handle)
-		{
-			if (!CloseHandle(handle)) { return false; }
-			handle = IntPtr.Zero; return true;
-		}
-		
+        public static bool CloseHandle(ref IntPtr handle)
+        {
+            if (!CloseHandle(handle)) { return false; }
+            handle = IntPtr.Zero; return true;
+        }
+
         [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public unsafe static extern bool ReadFile(IntPtr handle, byte* buffer, int bytesToRead,
@@ -1485,9 +1485,9 @@ namespace HidSharp.Platform.Windows
             int error;
 
             ushort allocated;
-            error = NativeMethods.BluetoothGATTGetCharacteristics(handle, ref service,  0, null, out allocated);
-            if (error == NativeMethods.ERROR_NOT_FOUND) { allocated = 0; } else
-            if (error != NativeMethods.ERROR_MORE_DATA) { return null; }
+            error = NativeMethods.BluetoothGATTGetCharacteristics(handle, ref service, 0, null, out allocated);
+            if (error == NativeMethods.ERROR_NOT_FOUND) { allocated = 0; }
+            else if (error != NativeMethods.ERROR_MORE_DATA) { return null; }
 
             var characteristics = new NativeMethods.BTH_LE_GATT_CHARACTERISTIC[allocated];
             if (allocated > 0)
@@ -1515,7 +1515,8 @@ namespace HidSharp.Platform.Windows
 
             ushort allocated;
             error = NativeMethods.BluetoothGATTGetDescriptors(handle, ref characteristic, 0, null, out allocated);
-            if (error == NativeMethods.ERROR_NOT_FOUND) { allocated = 0; } else
+            if (error == NativeMethods.ERROR_NOT_FOUND) { allocated = 0; }
+            else
             if (error != NativeMethods.ERROR_MORE_DATA) { return null; }
 
             var descriptors = new NativeMethods.BTH_LE_GATT_DESCRIPTOR[allocated];

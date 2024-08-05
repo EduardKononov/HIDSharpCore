@@ -237,7 +237,7 @@ namespace HidSharp.Platform.Windows
             GC.KeepAlive(windowProc);
         }
 
-        static IntPtr  RegisterDeviceNotification(IntPtr hwnd, Guid guid)
+        static IntPtr RegisterDeviceNotification(IntPtr hwnd, Guid guid)
         {
             var notifyFilter = new NativeMethods.DEV_BROADCAST_DEVICEINTERFACE()
             {
@@ -329,7 +329,7 @@ namespace HidSharp.Platform.Windows
                         // For now, this doesn't raise the DeviceList Changed event. It only seems to occur at connection.
                     }
                 }
-                
+
                 return (IntPtr)1;
             }
 
@@ -369,7 +369,8 @@ namespace HidSharp.Platform.Windows
 
                             switch (NativeMethods.WaitForMultipleObjects(2, handles, false, uint.MaxValue))
                             {
-                                case NativeMethods.WAIT_OBJECT_0: default:
+                                case NativeMethods.WAIT_OBJECT_0:
+                                default:
                                     return;
 
                                 case NativeMethods.WAIT_OBJECT_1:

@@ -39,7 +39,7 @@ namespace HidSharp
         /// <exclude />
         public override void Flush()
         {
-            
+
         }
 
         /// <summary>
@@ -98,8 +98,8 @@ namespace HidSharp
         /// <param name="buffer">The buffer of data to send. Place the Report ID in the byte at index <paramref name="offset"/>.</param>
         /// <param name="offset">The index in the buffer to start the write from.</param>
         /// <param name="count">The number of bytes in the feature request.</param>
-        public abstract void SetFeature(byte[] buffer, int offset, int count);	
-		
+        public abstract void SetFeature(byte[] buffer, int offset, int count);
+
         /// <summary>
         /// Writes an HID Output Report to the device.
         /// </summary>

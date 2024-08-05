@@ -58,7 +58,7 @@ namespace HidSharp
         public object GetOption(OpenOption option)
         {
             Throw.If.Null(option, "option");
-            
+
             object value;
             return _options.TryGetValue(option, out value) ? value : option.DefaultValue;
         }

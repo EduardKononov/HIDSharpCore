@@ -28,47 +28,47 @@ namespace HidSharp.Platform.Linux
 {
     static class NativeMethods
     {
-		const string libc = "libc";
+        const string libc = "libc";
 
-		public enum error
-		{
-			OK = 0,
-			EPERM = 1,
-			EINTR = 4,
-			EIO = 5,
-			ENXIO = 6,
-			EBADF = 9,
-			EAGAIN = 11,
-			EACCES = 13,
-			EBUSY = 16,
-			ENODEV = 19,
-			EINVAL = 22
-		}
-			
-		[Flags]
-		public enum oflag
-		{
-			RDONLY = 0x000,
-			WRONLY = 0x001,
-			RDWR = 0x002,
-			CREAT = 0x040,
-			EXCL = 0x080,
+        public enum error
+        {
+            OK = 0,
+            EPERM = 1,
+            EINTR = 4,
+            EIO = 5,
+            ENXIO = 6,
+            EBADF = 9,
+            EAGAIN = 11,
+            EACCES = 13,
+            EBUSY = 16,
+            ENODEV = 19,
+            EINVAL = 22
+        }
+
+        [Flags]
+        public enum oflag
+        {
+            RDONLY = 0x000,
+            WRONLY = 0x001,
+            RDWR = 0x002,
+            CREAT = 0x040,
+            EXCL = 0x080,
             NOCTTY = 0x100,
-			TRUNC = 0x200,
-			APPEND = 0x400,
-			NONBLOCK = 0x800
-		}
-	
-		[Flags]
-		public enum pollev : short
-		{
-			IN = 0x01,
-			PRI = 0x02,
-			OUT = 0x04,
-			ERR = 0x08,
-			HUP = 0x10,
-			NVAL = 0x20
-		}
+            TRUNC = 0x200,
+            APPEND = 0x400,
+            NONBLOCK = 0x800
+        }
+
+        [Flags]
+        public enum pollev : short
+        {
+            IN = 0x01,
+            PRI = 0x02,
+            OUT = 0x04,
+            ERR = 0x08,
+            HUP = 0x10,
+            NVAL = 0x20
+        }
 
         public enum ENDPOINT_DIRECTION
         {
@@ -88,38 +88,38 @@ namespace HidSharp.Platform.Linux
         }
 
         public struct pollfd
-		{
-			public int fd;
-			public pollev events;
-			public pollev revents;
-		}
+        {
+            public int fd;
+            public pollev events;
+            public pollev revents;
+        }
 
-		public static int retry(Func<int> sysfunc)
-		{
-			while (true)
-			{
+        public static int retry(Func<int> sysfunc)
+        {
+            while (true)
+            {
                 int ret = sysfunc(); var error = (error)Marshal.GetLastWin32Error();
                 if (ret >= 0 || error != error.EINTR) { return ret; }
-			}
-		}
+            }
+        }
 
-		public static IntPtr retry(Func<IntPtr> sysfunc)
-		{
-			while (true)
-			{
+        public static IntPtr retry(Func<IntPtr> sysfunc)
+        {
+            while (true)
+            {
                 IntPtr ret = sysfunc(); var error = (error)Marshal.GetLastWin32Error();
                 if ((long)ret >= 0 || error != error.EINTR) { return ret; }
-			}
-		}
+            }
+        }
 
-		public static bool uname(out string sysname, out Version release)
-		{
-			string releaseStr; release = null;
-			if (!uname(out sysname, out releaseStr)) { return false; }
+        public static bool uname(out string sysname, out Version release)
+        {
+            string releaseStr; release = null;
+            if (!uname(out sysname, out releaseStr)) { return false; }
             releaseStr = new string(releaseStr.Trim().TakeWhile(ch => (ch >= '0' && ch <= '9') || ch == '.').ToArray());
-			release = new Version(releaseStr);
-			return true;
-		}
+            release = new Version(releaseStr);
+            return true;
+        }
 
         public static bool uname(out string sysname, out string release)
         {
@@ -159,23 +159,23 @@ namespace HidSharp.Platform.Linux
             sysname = null; release = null;
             return false;
         }
-		
-		[DllImport(libc, SetLastError = true)]
-		public static extern int open(
-			[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8Marshaler))] string filename,
-			 oflag oflag);
-		
-		[DllImport(libc, SetLastError = true)]
-		public static extern int close(int filedes);
 
-		[DllImport(libc, SetLastError = true)]
-		public static extern IntPtr read(int filedes, IntPtr buffer, UIntPtr size);
-		
-		[DllImport(libc, SetLastError = true)]
-		public static extern IntPtr write(int filedes, IntPtr buffer, UIntPtr size);
+        [DllImport(libc, SetLastError = true)]
+        public static extern int open(
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Utf8Marshaler))] string filename,
+             oflag oflag);
 
-		[DllImport(libc, SetLastError = true)]
-		public static extern int poll(pollfd[] fds, IntPtr nfds, int timeout);
+        [DllImport(libc, SetLastError = true)]
+        public static extern int close(int filedes);
+
+        [DllImport(libc, SetLastError = true)]
+        public static extern IntPtr read(int filedes, IntPtr buffer, UIntPtr size);
+
+        [DllImport(libc, SetLastError = true)]
+        public static extern IntPtr write(int filedes, IntPtr buffer, UIntPtr size);
+
+        [DllImport(libc, SetLastError = true)]
+        public static extern int poll(pollfd[] fds, IntPtr nfds, int timeout);
 
         [DllImport(libc, SetLastError = true)]
         public static extern int poll(ref pollfd fds, IntPtr nfds, int timeout);

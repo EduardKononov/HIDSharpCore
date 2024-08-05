@@ -86,7 +86,9 @@ namespace HidSharp.Reports.Units
         public static uint EncodeExponent(int value)
         {
             if (value < -8 || value > 7)
-                { throw new ArgumentOutOfRangeException("value", "Exponent range is [-8, 7]."); }
+            {
+                throw new ArgumentOutOfRangeException("value", "Exponent range is [-8, 7].");
+            }
             return (uint)(value < 0 ? value + 16 : value);
         }
 

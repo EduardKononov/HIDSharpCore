@@ -54,7 +54,7 @@ namespace HidSharp.Reports
             uint value = 0; int totalBits = Math.Min(ElementBits, 32);
             bitOffset += elementIndex * ElementBits;
 
-            for (int i = 0; i < totalBits; i++, bitOffset ++)
+            for (int i = 0; i < totalBits; i++, bitOffset++)
             {
                 int byteStart = bitOffset >> 3; byte bitStart = (byte)(1u << (bitOffset & 7));
                 value |= (buffer[byteStart] & bitStart) != 0 ? (1u << i) : 0;

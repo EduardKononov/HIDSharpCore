@@ -34,7 +34,8 @@ namespace HidSharp
         {
             lock (this)
             {
-                if (_isCompleted) { return; } _isCompleted = true;
+                if (_isCompleted) { return; }
+                _isCompleted = true;
                 if (_waitHandle != null) { _waitHandle.Set(); }
             }
 
@@ -47,7 +48,7 @@ namespace HidSharp
             AsyncCallback callback, object state)
         {
             var ar = new AsyncResult<T>(callback, state);
-            ThreadPool.QueueUserWorkItem(delegate(object self)
+            ThreadPool.QueueUserWorkItem(delegate (object self)
             {
                 try { ar.Result = operation(); }
                 catch (Exception e) { ar.Exception = e; }
