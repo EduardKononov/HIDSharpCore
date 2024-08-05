@@ -8,11 +8,11 @@
     <RootNamespace>HidSharp</RootNamespace>
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
-  
+
   <PropertyGroup>
     <PackageId>HidSharpCore</PackageId>
     <PackageOutputPath>./nupkg</PackageOutputPath>
-    <Version>1.2.1</Version>
+    <Version>1.3.0</Version>
     <Authors>James F. Bellinger; InfinityGhost</Authors>
     <Copyright>Copyright 2010-2019 James Bellinger</Copyright>
   </PropertyGroup>
