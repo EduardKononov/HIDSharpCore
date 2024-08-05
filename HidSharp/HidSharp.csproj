@@ -7,7 +7,7 @@
     <AssemblyName>HidSharpCore</AssemblyName>
     <RootNamespace>HidSharp</RootNamespace>
     <LangVersion>preview</LangVersion>
-    <NoWarn>CS8981</NoWarn>
+    <NoWarn>CS8981; CA1416</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>

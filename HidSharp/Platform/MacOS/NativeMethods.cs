@@ -301,6 +301,8 @@ namespace HidSharp.Platform.MacOS
             public uint completionTimeout;
         }
 
+#pragma warning disable CS0649, CS0169
+
         [StructLayout(LayoutKind.Sequential)]
         public unsafe struct IOCFPlugInInterface
         {
@@ -466,6 +468,8 @@ namespace HidSharp.Platform.MacOS
             byte byte14;
             byte byte15;
         }
+
+#pragma warning restore CS0649, CS0169
 
         public static CFType ToCFType(this IntPtr handle)
         {
