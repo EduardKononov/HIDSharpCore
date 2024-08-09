@@ -60,7 +60,7 @@ namespace HidSharp
         public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
         {
             Throw.If.OutOfRange(buffer, offset, count);
-            return AsyncResult<int>.BeginOperation(delegate()
+            return AsyncResult<int>.BeginOperation(delegate ()
             {
                 return Read(buffer, offset, count);
             }, callback, state);
@@ -76,7 +76,7 @@ namespace HidSharp
         public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
         {
             Throw.If.OutOfRange(buffer, offset, count);
-            return AsyncResult<int>.BeginOperation(delegate()
+            return AsyncResult<int>.BeginOperation(delegate ()
             {
                 Write(buffer, offset, count); return 0;
             }, callback, state);

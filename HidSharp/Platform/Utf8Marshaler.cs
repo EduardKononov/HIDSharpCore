@@ -42,7 +42,7 @@ namespace HidSharp.Platform
         public void CleanUpNativeData(IntPtr ptr)
         {
             var allocations = GetAllocations();
-			if (IntPtr.Zero == ptr || !allocations.Contains(ptr)) { return; }
+            if (IntPtr.Zero == ptr || !allocations.Contains(ptr)) { return; }
             Marshal.FreeHGlobal(ptr); allocations.Remove(ptr);
         }
 
@@ -77,12 +77,12 @@ namespace HidSharp.Platform
             string str = Encoding.UTF8.GetString(bytes);
             return str;
         }
-		
+
         // This method needs to keep its original name.
         [Obfuscation(Exclude = true)]
-		public static ICustomMarshaler GetInstance(string cookie)
-		{
-			return new Utf8Marshaler();
-		}
+        public static ICustomMarshaler GetInstance(string cookie)
+        {
+            return new Utf8Marshaler();
+        }
     }
 }

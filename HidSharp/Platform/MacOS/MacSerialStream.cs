@@ -115,7 +115,7 @@ namespace HidSharp.Platform.MacOS
                 NativeMethods.retry(() => NativeMethods.tcdrain(handle));
             }
         }
-        
+
         // Make these timeouts not infinite, so that threads blocking on poll will exit.
         static int GetTimeout(int startTime, int rwTimeout)
         {
@@ -182,7 +182,7 @@ namespace HidSharp.Platform.MacOS
             {
                 int startTime = Environment.TickCount, writeTimeout = WriteTimeout;
 
-                for (int bytesWritten = 0; bytesWritten < count; )
+                for (int bytesWritten = 0; bytesWritten < count;)
                 {
                     int handle = _handle;
                     if (handle < 0) { throw new IOException("Closed."); }

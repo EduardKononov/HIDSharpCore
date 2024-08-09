@@ -84,7 +84,7 @@ namespace HidSharp.Platform.Windows
                 for (int i = 0; i < watchedCharacteristics.Count; i++)
                 {
                     var wc = watchedCharacteristics[i];
-                    Marshal.StructureToPtr(wc.NativeData, (IntPtr)eb,false);
+                    Marshal.StructureToPtr(wc.NativeData, (IntPtr)eb, false);
                     eb += NativeMethods.BTH_LE_GATT_CHARACTERISTIC.Size;
 
                     _watchMap[wc.NativeData.AttributeHandle] = wc;
@@ -198,7 +198,7 @@ namespace HidSharp.Platform.Windows
         {
             Throw.If.Null(characteristic, "characteristic").Null(value, "value").OutOfRange(value, offset, count);
 
-			HandleAcquireIfOpenOrFail();
+            HandleAcquireIfOpenOrFail();
             try
             {
                 lock (_writeSync)
@@ -418,12 +418,12 @@ namespace HidSharp.Platform.Windows
 
         public override unsafe BleEvent ReadEvent()
         {
-			HandleAcquireIfOpenOrFail();
+            HandleAcquireIfOpenOrFail();
             try
             {
+                IntPtr* handles = stackalloc IntPtr[2];
                 while (true)
                 {
-                    IntPtr* handles = stackalloc IntPtr[2];
                     handles[0] = _watchEventHandle; handles[1] = _closeEventHandle;
                     uint waitResult = NativeMethods.WaitForMultipleObjects(2, handles, false, NativeMethods.WaitForMultipleObjectsGetTimeout(ReadTimeout));
                     switch (waitResult)

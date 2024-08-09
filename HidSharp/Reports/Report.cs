@@ -64,7 +64,7 @@ namespace HidSharp.Reports
 
             var dataItems = DataItems;
             int dataItemCount = dataItems.Count;
-            for (int indexOfDataItem = 0; indexOfDataItem < dataItemCount; indexOfDataItem ++)
+            for (int indexOfDataItem = 0; indexOfDataItem < dataItemCount; indexOfDataItem++)
             {
                 var dataItem = dataItems[indexOfDataItem];
                 callback(buffer, bitOffset, dataItem, indexOfDataItem);

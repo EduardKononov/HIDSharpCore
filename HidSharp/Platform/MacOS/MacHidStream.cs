@@ -43,9 +43,9 @@ namespace HidSharp.Platform.MacOS
             _readThread = new Thread(ReadThread) { IsBackground = true, Name = "HID Reader" };
             _writeThread = new Thread(WriteThread) { IsBackground = true, Name = "HID Writer" };
         }
-		
-		internal void Init(NativeMethods.io_string_t path)
-		{
+
+        internal void Init(NativeMethods.io_string_t path)
+        {
             IntPtr handle; int retryCount = 0, maxRetries = 10;
             while (true)
             {
@@ -87,15 +87,15 @@ namespace HidSharp.Platform.MacOS
                 }
             }
             _handle = handle;
-			HandleInitAndOpen();
+            HandleInitAndOpen();
 
             _readThread.Start();
             _writeThread.Start();
-		}
-		
+        }
+
         protected override void Dispose(bool disposing)
         {
-			if (!HandleClose()) { return; }
+            if (!HandleClose()) { return; }
 
             _shutdown = true;
             try { lock (_inputQueue) { Monitor.PulseAll(_inputQueue); } } catch { }
@@ -104,7 +104,7 @@ namespace HidSharp.Platform.MacOS
             while (true)
             {
                 var runLoop = _readRunLoop;
-                if (runLoop != null) { NativeMethods.CFRunLoopStop(runLoop); }
+                if (runLoop != IntPtr.Zero) { NativeMethods.CFRunLoopStop(runLoop); }
 
                 try
                 {
@@ -117,19 +117,19 @@ namespace HidSharp.Platform.MacOS
             }
 
             try { _writeThread.Join(); } catch { }
-			HandleRelease();
+            HandleRelease();
 
             base.Dispose(disposing);
         }
 
-		internal override void HandleFree()
-		{
-			NativeMethods.CFRelease(_handle); _handle = IntPtr.Zero;
-		}
-		
+        internal override void HandleFree()
+        {
+            NativeMethods.CFRelease(_handle); _handle = IntPtr.Zero;
+        }
+
         void ReadThreadCallback(IntPtr context, NativeMethods.IOReturn result, IntPtr sender,
                                 NativeMethods.IOHIDReportType type,
-		                        uint reportID, IntPtr report, IntPtr reportLength)
+                                uint reportID, IntPtr report, IntPtr reportLength)
         {
             if (result == NativeMethods.IOReturn.Success && reportLength != IntPtr.Zero)
             {
@@ -155,12 +155,12 @@ namespace HidSharp.Platform.MacOS
 
         unsafe void ReadThread()
         {
-			if (!HandleAcquire()) { return; }
-			_readRunLoop = NativeMethods.CFRunLoopGetCurrent();
+            if (!HandleAcquire()) { return; }
+            _readRunLoop = NativeMethods.CFRunLoopGetCurrent();
 
             try
             {
-				var inputCallback = new NativeMethods.IOHIDReportCallback(ReadThreadCallback);
+                var inputCallback = new NativeMethods.IOHIDReportCallback(ReadThreadCallback);
                 var removalCallback = new NativeMethods.IOHIDCallback(RemovalCallback);
 
                 byte[] inputReport = new byte[Device.GetMaxInputReportLength()];
@@ -174,9 +174,9 @@ namespace HidSharp.Platform.MacOS
                     NativeMethods.CFRunLoopRun();
                     NativeMethods.IOHIDDeviceUnscheduleFromRunLoop(_handle, _readRunLoop, NativeMethods.kCFRunLoopDefaultMode);
                 }
-				
-				GC.KeepAlive(this);
-				GC.KeepAlive(inputCallback);
+
+                GC.KeepAlive(this);
+                GC.KeepAlive(inputCallback);
                 GC.KeepAlive(removalCallback);
                 GC.KeepAlive(_inputQueue);
             }
@@ -194,12 +194,12 @@ namespace HidSharp.Platform.MacOS
         public unsafe override void GetFeature(byte[] buffer, int offset, int count)
         {
             Throw.If.OutOfRange(buffer, offset, count);
-			
-			HandleAcquireIfOpenOrFail();
-			try
-			{
-	            fixed (byte* bufferBytes = buffer)
-	            {
+
+            HandleAcquireIfOpenOrFail();
+            try
+            {
+                fixed (byte* bufferBytes = buffer)
+                {
                     int reportID = buffer[offset];
                     var hasReportID = ((MacHidDevice)Device).ReportsUseID; int reportOffset = hasReportID ? 0 : 1;
                     var reportPtr = (IntPtr)(bufferBytes + offset + reportOffset);
@@ -207,45 +207,45 @@ namespace HidSharp.Platform.MacOS
                     count -= reportOffset;
                     if (count <= 0) { throw new ArgumentException(); }
 
-	                IntPtr reportLength = (IntPtr)count;
-	                if (NativeMethods.IOReturn.Success != NativeMethods.IOHIDDeviceGetReport(_handle, NativeMethods.IOHIDReportType.Feature,
-	                                                                           (IntPtr)reportID, reportPtr,
-	                                                                           ref reportLength))
-	
-	                {
-	                    throw new IOException("GetFeature failed.");
-	                }
-	            }
-			}
-			finally
-			{
-				HandleRelease();
-			}
+                    IntPtr reportLength = (IntPtr)count;
+                    if (NativeMethods.IOReturn.Success != NativeMethods.IOHIDDeviceGetReport(_handle, NativeMethods.IOHIDReportType.Feature,
+                                                                               (IntPtr)reportID, reportPtr,
+                                                                               ref reportLength))
+
+                    {
+                        throw new IOException("GetFeature failed.");
+                    }
+                }
+            }
+            finally
+            {
+                HandleRelease();
+            }
         }
 
         unsafe void WriteThread()
         {
-			if (!HandleAcquire()) { return; }
-			
-			try
-	        {	
-				lock (_outputQueue)
-				{								
-	                while (true)
-	                {
-	                    while (!_shutdown && _outputQueue.Count == 0) { Monitor.Wait(_outputQueue); }
-						if (_shutdown) { break; }
-	
-						NativeMethods.IOReturn ret;
-	                    CommonOutputReport outputReport = _outputQueue.Peek();
-	                    try
-	                    {
-	                        fixed (byte* outputReportBytes = outputReport.Bytes)
-	                        {
-	                            Monitor.Exit(_outputQueue);
-	
-	                            try
-	                            {
+            if (!HandleAcquire()) { return; }
+
+            try
+            {
+                lock (_outputQueue)
+                {
+                    while (true)
+                    {
+                        while (!_shutdown && _outputQueue.Count == 0) { Monitor.Wait(_outputQueue); }
+                        if (_shutdown) { break; }
+
+                        NativeMethods.IOReturn ret;
+                        CommonOutputReport outputReport = _outputQueue.Peek();
+                        try
+                        {
+                            fixed (byte* outputReportBytes = outputReport.Bytes)
+                            {
+                                Monitor.Exit(_outputQueue);
+
+                                try
+                                {
                                     int reportID = outputReport.Bytes[0];
                                     var hasReportID = ((MacHidDevice)Device).ReportsUseID; int reportOffset = hasReportID ? 0 : 1;
                                     var reportPtr = (IntPtr)(outputReportBytes + reportOffset);
@@ -257,22 +257,22 @@ namespace HidSharp.Platform.MacOS
                                                                           (IntPtr)reportID, reportPtr, (IntPtr)reportLength);
                                         if (ret == NativeMethods.IOReturn.Success) { outputReport.DoneOK = true; }
                                     }
-	                            }
-	                            finally
-	                            {
-	                                Monitor.Enter(_outputQueue);
-	                            }
-	                        }
-	                    }
-	                    finally
-	                    {
-							_outputQueue.Dequeue();
-	                        outputReport.Done = true;
-	                        Monitor.PulseAll(_outputQueue);
-	                    }
-	                }
-	            }
-			}
+                                }
+                                finally
+                                {
+                                    Monitor.Enter(_outputQueue);
+                                }
+                            }
+                        }
+                        finally
+                        {
+                            _outputQueue.Dequeue();
+                            outputReport.Done = true;
+                            Monitor.PulseAll(_outputQueue);
+                        }
+                    }
+                }
+            }
             finally
             {
                 HandleRelease();

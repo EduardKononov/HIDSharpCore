@@ -23,7 +23,7 @@ namespace HidSharp.Reports
     {
         public IndexRange()
         {
-            
+
         }
 
         public IndexRange(uint minimum, uint maximum)

@@ -58,7 +58,7 @@ namespace HidSharp.Reports.Input
 
                 foreach (var dataItem in inputReport.DataItems)
                 {
-                    int elementCount = dataItem.ElementCount; 
+                    int elementCount = dataItem.ElementCount;
                     var usages = dataItem.Usages;
                     int usageCount = usages.Count;
 

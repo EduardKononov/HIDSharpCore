@@ -143,7 +143,7 @@ namespace HidSharp
             DeviceStream baseStream;
             bool result = base.TryOpen(openConfig, out baseStream);
             stream = (HidStream)baseStream; return result;
-		}
+        }
 
         public override bool HasImplementationDetail(Guid detail)
         {

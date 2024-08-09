@@ -97,7 +97,7 @@ namespace HidSharp.Experimental
         public virtual IAsyncResult BeginWriteCharacteristicWithoutResponse(BleCharacteristic characteristic, byte[] value, int offset, int count, BleRequestFlags requestFlags,
                                                                             AsyncCallback callback, object state)
         {
-            return AsyncResult<int>.BeginOperation(delegate()
+            return AsyncResult<int>.BeginOperation(delegate ()
             {
                 WriteCharacteristicWithoutResponse(characteristic, value, offset, count, requestFlags); return 0;
             }, callback, state);
@@ -138,7 +138,7 @@ namespace HidSharp.Experimental
 
         public virtual IAsyncResult BeginReadEvent(AsyncCallback callback, object state)
         {
-            return AsyncResult<BleEvent>.BeginOperation(delegate()
+            return AsyncResult<BleEvent>.BeginOperation(delegate ()
             {
                 return ReadEvent();
             }, callback, state);

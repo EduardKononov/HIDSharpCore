@@ -28,7 +28,7 @@ namespace HidSharp.Reports
 
         public override bool TryGetIndexFromValue(uint value, out int index)
         {
-            for (int i = 0; i < Indices.Count; i ++)
+            for (int i = 0; i < Indices.Count; i++)
             {
                 foreach (uint thisValue in Indices[i])
                 {

@@ -183,7 +183,7 @@ namespace HidSharp.Platform.Linux
             {
                 int startTime = Environment.TickCount, writeTimeout = WriteTimeout;
 
-                for (int bytesWritten = 0; bytesWritten < count; )
+                for (int bytesWritten = 0; bytesWritten < count;)
                 {
                     int handle = _handle;
                     if (handle < 0) { throw new IOException("Closed."); }

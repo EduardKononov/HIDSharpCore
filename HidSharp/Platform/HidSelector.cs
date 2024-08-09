@@ -22,7 +22,7 @@ namespace HidSharp.Platform
     sealed class HidSelector
     {
         public static readonly HidManager Instance;
-        static readonly Thread ManagerThread; 
+        static readonly Thread ManagerThread;
 
         static HidSelector()
         {

@@ -36,7 +36,7 @@ namespace HidSharp.Platform.Windows
 
         ~WinHidStream()
         {
-			Close();
+            Close();
             NativeMethods.CloseHandle(_closeEventHandle);
         }
 
@@ -55,43 +55,43 @@ namespace HidSharp.Platform.Windows
                 throw new IOException("Failed to set input buffers.", new Win32Exception());
             }
 
-			_handle = handle;
-			HandleInitAndOpen();
+            _handle = handle;
+            HandleInitAndOpen();
         }
-		
+
         protected override void Dispose(bool disposing)
         {
-			if (!HandleClose()) { return; }
-			
-			NativeMethods.SetEvent(_closeEventHandle);
-			HandleRelease();
+            if (!HandleClose()) { return; }
+
+            NativeMethods.SetEvent(_closeEventHandle);
+            HandleRelease();
 
             base.Dispose(disposing);
-		}
-		
-		internal override void HandleFree()
-		{
-			NativeMethods.CloseHandle(ref _handle);
-			NativeMethods.CloseHandle(ref _closeEventHandle);
-		}
+        }
+
+        internal override void HandleFree()
+        {
+            NativeMethods.CloseHandle(ref _handle);
+            NativeMethods.CloseHandle(ref _closeEventHandle);
+        }
 
         public unsafe override void GetFeature(byte[] buffer, int offset, int count)
         {
             Throw.If.OutOfRange(buffer, offset, count);
-			
-			HandleAcquireIfOpenOrFail();
-			try
-			{
-	            fixed (byte* ptr = buffer)
-	            {
-	                if (!NativeMethods.HidD_GetFeature(_handle, ptr + offset, count))
-	                    { throw new IOException("GetFeature failed.", new Win32Exception()); }
-	            }
-			}
-			finally
-			{
-				HandleRelease();
-			}
+
+            HandleAcquireIfOpenOrFail();
+            try
+            {
+                fixed (byte* ptr = buffer)
+                {
+                    if (!NativeMethods.HidD_GetFeature(_handle, ptr + offset, count))
+                    { throw new IOException("GetFeature failed.", new Win32Exception()); }
+                }
+            }
+            finally
+            {
+                HandleRelease();
+            }
         }
 
         // Buffer needs to be big enough for the largest report, plus a byte
@@ -100,34 +100,34 @@ namespace HidSharp.Platform.Windows
         {
             Throw.If.OutOfRange(buffer, offset, count); uint bytesTransferred;
             IntPtr @event = NativeMethods.CreateManualResetEventOrThrow();
-			
-			HandleAcquireIfOpenOrFail();
+
+            HandleAcquireIfOpenOrFail();
             try
             {
-				lock (_readSync)
-				{
-	                int minIn = Device.GetMaxInputReportLength();
+                lock (_readSync)
+                {
+                    int minIn = Device.GetMaxInputReportLength();
                     if (minIn <= 0) { throw new IOException("Can't read from this device."); }
                     if (_readBuffer == null || _readBuffer.Length < Math.Max(count, minIn)) { Array.Resize(ref _readBuffer, Math.Max(count, minIn)); }
-	
-	                fixed (byte* ptr = _readBuffer)
-	                {
+
+                    fixed (byte* ptr = _readBuffer)
+                    {
                         var overlapped = stackalloc NativeOverlapped[1];
                         overlapped[0].EventHandle = @event;
-                        
+
                         NativeMethods.OverlappedOperation(_handle, @event, ReadTimeout, _closeEventHandle,
                             NativeMethods.ReadFile(_handle, ptr, Math.Max(count, minIn), IntPtr.Zero, overlapped),
                             overlapped, out bytesTransferred);
 
-	                    if (count > (int)bytesTransferred) { count = (int)bytesTransferred; }
-	                    Array.Copy(_readBuffer, 0, buffer, offset, count);
-	                    return count;
-	                }
-				}
+                        if (count > (int)bytesTransferred) { count = (int)bytesTransferred; }
+                        Array.Copy(_readBuffer, 0, buffer, offset, count);
+                        return count;
+                    }
+                }
             }
             finally
             {
-				HandleRelease();
+                HandleRelease();
                 NativeMethods.CloseHandle(@event);
             }
         }
@@ -135,20 +135,20 @@ namespace HidSharp.Platform.Windows
         public unsafe override void SetFeature(byte[] buffer, int offset, int count)
         {
             Throw.If.OutOfRange(buffer, offset, count);
-			
-			HandleAcquireIfOpenOrFail();
-			try
-			{
-	            fixed (byte* ptr = buffer)
-	            {
-	                if (!NativeMethods.HidD_SetFeature(_handle, ptr + offset, count))
-	                    { throw new IOException("SetFeature failed.", new Win32Exception()); }
-	            }
-			}
-			finally
-			{
-				HandleRelease();
-			}
+
+            HandleAcquireIfOpenOrFail();
+            try
+            {
+                fixed (byte* ptr = buffer)
+                {
+                    if (!NativeMethods.HidD_SetFeature(_handle, ptr + offset, count))
+                    { throw new IOException("SetFeature failed.", new Win32Exception()); }
+                }
+            }
+            finally
+            {
+                HandleRelease();
+            }
         }
 
         public unsafe override void Write(byte[] buffer, int offset, int count)
@@ -156,41 +156,41 @@ namespace HidSharp.Platform.Windows
             Throw.If.OutOfRange(buffer, offset, count); uint bytesTransferred;
             IntPtr @event = NativeMethods.CreateManualResetEventOrThrow();
 
-			HandleAcquireIfOpenOrFail();
+            HandleAcquireIfOpenOrFail();
             try
             {
-				lock (_writeSync)
-				{
-	                int minOut = Device.GetMaxOutputReportLength();
+                lock (_writeSync)
+                {
+                    int minOut = Device.GetMaxOutputReportLength();
                     if (minOut <= 0) { throw new IOException("Can't write to this device."); }
                     if (_writeBuffer == null || _writeBuffer.Length < Math.Max(count, minOut)) { Array.Resize(ref _writeBuffer, Math.Max(count, minOut)); }
-	                Array.Copy(buffer, offset, _writeBuffer, 0, count);
+                    Array.Copy(buffer, offset, _writeBuffer, 0, count);
 
                     if (count < minOut)
                     {
                         Array.Clear(_writeBuffer, count, minOut - count);
                         count = minOut;
                     }
-	
-	                fixed (byte* ptr = _writeBuffer)
-	                {
-	                    int offset0 = 0;
-	                    while (count > 0)
-	                    {
-                            var overlapped = stackalloc NativeOverlapped[1];
-                            overlapped[0].EventHandle = @event;
+
+                    fixed (byte* ptr = _writeBuffer)
+                    {
+                        int offset0 = 0;
+                        while (count > 0)
+                        {
+                            NativeOverlapped overlapped = default;
+                            overlapped.EventHandle = @event;
 
                             NativeMethods.OverlappedOperation(_handle, @event, WriteTimeout, _closeEventHandle,
-	                            NativeMethods.WriteFile(_handle, ptr + offset0, Math.Min(minOut, count), IntPtr.Zero, overlapped),
-	                            overlapped, out bytesTransferred);
-	                        count -= (int)bytesTransferred; offset0 += (int)bytesTransferred;
-	                    }
-	                }
-				}
+                                NativeMethods.WriteFile(_handle, ptr + offset0, Math.Min(minOut, count), IntPtr.Zero, &overlapped),
+                                &overlapped, out bytesTransferred);
+                            count -= (int)bytesTransferred; offset0 += (int)bytesTransferred;
+                        }
+                    }
+                }
             }
             finally
             {
-				HandleRelease();
+                HandleRelease();
                 NativeMethods.CloseHandle(@event);
             }
         }

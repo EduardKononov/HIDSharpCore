@@ -69,7 +69,7 @@ namespace HidSharp.Platform.Linux
                             if (0 == (fds[0].revents & NativeMethods.pollev.IN))
                             {
                                 IntPtr device = NativeMethodsLibudev.Instance.udev_monitor_receive_device(monitor);
-                                if (device != null)
+                                if (device != IntPtr.Zero)
                                 {
                                     NativeMethodsLibudev.Instance.udev_device_unref(device);
 

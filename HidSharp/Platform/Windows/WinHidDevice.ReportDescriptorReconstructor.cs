@@ -100,7 +100,7 @@ namespace HidSharp.Platform.Windows
                     int maxBit = (reportBytes.Length - 1) * 8;
 
                     // Determine the location of all report items.
-                    for (int reportItemIndex = 0; reportItemIndex < reportItemList.Length; reportItemIndex ++)
+                    for (int reportItemIndex = 0; reportItemIndex < reportItemList.Length; reportItemIndex++)
                     {
                         var reportItem = reportItemList[reportItemIndex];
 
@@ -153,7 +153,7 @@ namespace HidSharp.Platform.Windows
                             else
                             {
                                 throw new NotImplementedException();
-                            }                            
+                            }
                         }
                         else if (dataIndexCount == 1)
                         {
@@ -251,7 +251,7 @@ namespace HidSharp.Platform.Windows
             {
                 int countToCheck = Math.Min(_currentNodes.Count, newNodes.Count);
                 int sharedCount;
-                for (sharedCount = 0; sharedCount < countToCheck;  sharedCount++)
+                for (sharedCount = 0; sharedCount < countToCheck; sharedCount++)
                 {
                     if (_currentNodes[sharedCount] != newNodes[sharedCount]) { break; }
                 }
@@ -301,7 +301,7 @@ namespace HidSharp.Platform.Windows
                 {
                     if (NativeMethods.HidP_GetValueCaps(reportType, values, ref count, _preparsed) != NativeMethods.HIDP_STATUS_SUCCESS || count != valueCount) { throw new NotImplementedException(); }
                 }
-                
+
                 caps.Items = buttons.Select(b => new ItemCaps() { Button = true, Item = b })
                     .Concat(values.Select(v => new ItemCaps() { Button = false, Item = v }))
                     .ToArray();

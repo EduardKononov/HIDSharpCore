@@ -26,7 +26,7 @@ namespace HidSharp
         /// The lowest priority.
         /// </summary>
         Idle = -2,
-        
+
         /// <summary>
         /// Very low priority.
         /// </summary>
